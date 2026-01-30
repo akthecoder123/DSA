@@ -436,3 +436,14 @@ int partition(vector<int>&arr,int low,int high){int pivot=arr[0],i=low,j=high;
     swap(arr[low],arr[j]);
     return j;
 }
+
+//dutch national flag algorith(question : sort and bring all the 0's ,1's,2's together)
+int explaindutch(vector<int>&nums){int n=nums.size();
+    int low=0,mid=0,high=n-1;
+    while(mid<=high){
+        if(mid==0)swap(nums[low++],nums[mid++]);
+        else if(mid==1)mid++;
+        else swap(nums[mid],nums[high--]);
+    }
+
+}
