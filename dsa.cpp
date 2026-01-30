@@ -437,7 +437,7 @@ int partition(vector<int>&arr,int low,int high){int pivot=arr[0],i=low,j=high;
     return j;
 }
 
-//dutch national flag algorith(question : sort and bring all the 0's ,1's,2's together)
+//Dutch national flag algorith[basically the rule is that elements in 0 to low-1 should be all 0, low+1 to mid-1, all 1's, mid+1 to high-1,all unsorted,high+1 to n-1,all 2's](question : sort and bring all the 0's ,1's,2's together)
 int explaindutch(vector<int>&nums){int n=nums.size();
     int low=0,mid=0,high=n-1;
     while(mid<=high){
@@ -446,4 +446,23 @@ int explaindutch(vector<int>&nums){int n=nums.size();
         else swap(nums[mid],nums[high--]);
     }
 
+}
+//Moore's voting algorithm[basically, we first select an element(the first element) and then traverse through the array with a count variable whose work is to increment itself if the element is the selected element and decrement if it is not.if the count becomes 0, then we consider that, that selected element is not the majority element, so we move forward and select the next element,(element before which the subarray ended),again do the same process,and at the element for which the count doesn't become 0, is the majority element.](queston:find the majoriy element,i.e,element which is occuring more than n/2 times)
+int explainmoore(vector<int>&nums){int n=nums.size();
+    int el;
+    int cnt=0;
+    for(int i=0;i<n;i++){
+        if(cnt==0){
+            cnt=1;
+            el=nums[i];
+        }
+        else if(nums[i]==el)cnt++;
+        else cnt--;
+        }
+        int cnt1=0;
+        for(int i=0;i<n;i++){
+            if(nums[i]==el)cnt1++;
+        }
+        if(cnt1>n/2)return el;
+        return -1;
 }
