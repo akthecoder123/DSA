@@ -344,8 +344,9 @@ for(int i=0;i<n;i++){
         temp=arr[j-1];
         arr[j-1]=arr[j];
         arr[j]=temp;
+        j--;
     }//time comp. is O(N^2)in worst and avg. case ...and O(N) in best case, as when the array will already be sorted,only the for loop will run.
-    j--;
+   
 }
 }
 
@@ -365,15 +366,15 @@ mergesort(arr,mid+1,high);
 merge(arr,low,high,mid);
 }
 void merge(int arr[],int low, int high, int mid){
-    int left=0,right=mid+1;
+    int left=low,right=mid+1;
      vector<int>temp;
     while(left<=mid && right<=high){
         if(arr[left]<=arr[right]){
             temp.push_back(arr[left]);
             left++;
         }
-        temp.push_back(arr[right]);
-        right++;
+       else{ temp.push_back(arr[right]);
+        right++;}
     }
 
 while(left<=mid){
@@ -409,7 +410,7 @@ void explainslidingwindow(){
     
 }
 
-/*Quick Sort: just pick upa  pivot element and place it at its correct pospiition, pivot element can be any random element from the array.
+/*Quick Sort: just pick up a pivot element and place it at its correct pospiition, pivot element can be any random element from the array.
 Select the pivot and place smaller elements on left and alrger on right, so that pivot would now be at its correct position
 now again call this function for the left part, then right.(recursive)*/
 vector<int> explainquicksort(vector<int>arr){
@@ -423,7 +424,7 @@ int qs(vector<int>&arr,int low,int high){
     qs(arr,pIndex+1,high);}
 }
 
-int partition(vector<int>&arr,int low,int high){int pivot=arr[0],i=low,j=high;
+int partition(vector<int>&arr,int low,int high){int pivot=arr[low],i=low,j=high;
     while(i<j){
         while(i<=high-1 && pivot>=arr[i]){
             i++;
@@ -466,3 +467,493 @@ int explainmoore(vector<int>&nums){int n=nums.size();
         if(cnt1>n/2)return el;
         return -1;
 }
+
+//Lower bound: smallest index such that arr[i]>=x.If there no element in the array which is >=x,then the lower bound will be the last hypothetical element i.e. 'n'.
+int explainlowerbound(int array[],int n,int x){//remember,if the question is about searching an element then always use BS as it has the least complexity(logn)as it divides the array in halves each time it runs.
+    int l=0,r=n-1,index=n;
+    while(l<=r){
+        int mid=(l+r)/2;
+        if(array[mid]>=x){index= mid;r=mid-1;}
+        else l=mid+1;
+    }
+    return index;
+} 
+//to find lower bound,c++ has inbuilt function
+vector<int>arr(5);int x;
+int lb=lower_bound(arr.begin(),arr.end(),x)-arr.begin();//it returns the iterator pointing to the lb index,so to get the index,we subtract the begin iterator.
+
+//Upper bound: smallest index such that arr[i]>x.
+int explainupperbound(int array[],int n,int x){
+     int l=0,r=n-1,index=n;
+    while(l<=r){
+        int mid=(l+r)/2;
+        if(array[mid]>x){index= mid;r=mid-1;}
+        else l=mid+1;
+    }
+    return index;
+}
+
+//Floor and Ceil in sorted array: floor means the largest no. in the array which is <=x; ceil means the smallest no. in the array >=x,ceil is lower-bound only.
+
+//Linked List 
+class Node{//as linked list stores data as well as the pointer to the next value, it requires a special datatype, so we define our very own datatype.
+    public:
+    int data;
+    Node* next;
+    public:
+    Node(int data1, Node* next1){//this is the contructor
+        data=data1;
+        next=next1;}
+    public:
+    Node(int data1){
+        data=data1;
+        next=nullptr;
+    }
+};
+void explainlinkedlist(int array[],int n){
+    vector<int>arr={2,5,8,7};
+    //ways to initialize linked list
+    Node *x= new Node(2,nullptr);
+    //or(it is best as it automatically stores a pointer to the memory location)
+    Node* y=new Node(arr[0],nullptr);
+    cout<<y;//prints the address of the first node.
+    cout<<y->data;//prints 2
+    //if we remove 'new' then it will throw a error as it'll become an object.
+    Node z=Node(arr[0],nullptr);
+    cout<<z.data;
+    cout<<z.next;
+
+    //converting array to ll
+    Node* head=convertarr2ll(arr);
+    //to print all the elements in ll
+    Node* temp=head;
+    while(temp){
+        cout<<temp->data<<" ";
+        temp=temp->next;
+    }
+}
+
+Node* convertarr2ll(vector<int>&arr){
+    Node* head=new Node(arr[0]);
+    Node* mover=head;
+    for(int i=1;i<arr.size();i++){
+        Node* temp=new Node(arr[i]);
+        mover->next=temp;
+        mover=temp;
+    }
+    return head;
+}
+
+//to find the length of ll
+int lengthofll(Node* head){
+    int cnt=0;
+    Node* temp=head;
+    while(temp){
+        cout<<temp->data<<" ";
+        temp=temp->next;
+        cnt++;
+    }
+    return cnt;
+}
+
+//search in the ll
+int checkifpresent(Node* head,int val){
+    Node* temp=head;
+    while(temp){
+        if(temp->data==val)return 1;
+        temp=temp->next;
+    }
+    return 0;
+}
+
+//deletion of elements in LL(head,position,value,last)
+Node* deletehead(Node* head){
+    if(head==NULL)return head;
+    Node* temp=head;
+    head=head->next;
+    free(temp);
+    return head;
+}
+Node* deletetail(Node* head){
+    if(head==NULL || head->next==NULL)return NULL;
+    Node* temp=head;
+    while(temp->next->next!=NULL){
+        temp=temp->next;
+    }
+    free(temp->next);
+    temp->next=NULL;
+    return head;
+}
+Node* removekthelement(Node* head,int k){
+    if(head==NULL)return head;
+    if(k==1 ) {
+        Node* temp=head;
+        head=head->next;
+        free(temp);
+        return head;
+    }
+     int cnt=0;Node* temp=head,*prev=NULL;
+     while(temp!=NULL){
+        cnt++;
+        if(cnt==k){
+             prev->next=prev->next->next;
+             free(temp);break;
+        }
+        prev=temp;
+        temp=temp->next;
+     }
+     return head; //O(k)
+}
+Node* removevalue(Node* head,int value){         
+    if(head==NULL)return head;
+    if(head->data==value){
+        Node* temp=head;
+        head=head->next;
+        free(temp);
+        return head;
+    }
+     Node* temp=head,*prev=NULL;
+     while(temp!=NULL){
+        if(temp->data==value){
+             prev->next=prev->next->next;
+             free(temp);break;
+        }
+        prev=temp;
+        temp=temp->next;
+     }
+     return head; //O(N or 1 or N/2)n is the length of LL.
+} 
+
+//insertion of elements in LL
+Node* insertathead(Node* head,int value){
+    Node* temp;
+    temp->data=value;
+    temp->next=head;//or Node* el=new Node(value,head);
+    return temp;
+}
+Node* insertatend(Node* head,int value){
+    if(head==NULL){
+        return new Node(value);
+    }
+    Node*temp=head;
+    while(temp->next!=NULL){
+        temp=temp->next;
+    }
+    Node* newel=new Node(value,NULL);
+    temp->next=newel;
+    return head; 
+}
+Node* insertatkthposition(Node* head,int k,int value){
+    if(head==NULL){
+        if(k==1){
+        return new Node(value);}
+        else return NULL;
+    }
+    if(k==1){
+        return new Node(value,head);
+    }
+    int cnt=0;Node* temp=head;
+    while(temp!=NULL){
+        if(cnt==k-1){
+            Node* newel=new Node(value,temp->next);
+            temp->next=newel;break;
+        }
+        cnt++;
+        temp=temp->next;
+    }
+    return head;
+}
+Node* insertvaluebeforex(Node* head,int x,int value){
+        if(head==NULL)return NULL;
+    if(head->data==x){
+        return new Node(value,head);
+    }
+    Node* temp=head;
+    while(temp->next!=NULL){
+        if(temp->next->data==x){
+            Node* newel=new Node(value,temp->next);
+            temp->next=newel;break;
+        }
+        
+        temp=temp->next;
+    }
+    return head;
+}
+
+//DOUBLY LL
+class DNode{\
+        public:
+    int data;
+    DNode* next;
+    DNode* back;
+    DNode(int data1,DNode* next1,DNode* back1){
+        data=data1;
+        next=next1;
+        back=back1;
+    }
+    DNode(int data1){
+        data=data1;
+        next=nullptr;
+        back=nullptr;
+    }
+};
+
+DNode* convertarrtodll(int arr[], int n){
+    DNode* head = new DNode(arr[0]);
+    DNode* prev = head;
+    for(int i = 1; i < n; i++){
+        DNode* temp = new DNode(arr[i]);
+        prev->next = temp;
+        temp->back = prev;
+        prev = temp;
+    }
+    return head;
+}
+
+DNode* deletehead(DNode* head){
+    if(head==nullptr || head->next==nullptr)return nullptr;
+    DNode* temp=head;
+    head=head->next;
+    head->back=nullptr;
+    temp->next=nullptr;
+    free(temp);
+    return head;
+}
+
+DNode* deletetail(DNode* head){
+    if(head==nullptr || head->next==nullptr)return nullptr;
+    DNode* temp=head;
+    while(temp->next->next!=nullptr){//while(temp->next!=nullptr){temp=temp->next;}
+        temp=temp->next;               //temp->back->next=nullptr;                                        //prev->next=nullptr;                                        //
+    }                                   //delete(temp);
+    temp->next->back=nullptr;           
+    free(temp->next);
+    temp->next=nullptr;
+    return head;
+}
+
+DNode* deletekthel(DNode* head,int k){
+    if(head==nullptr)return nullptr; 
+    DNode* temp=head;
+    int cnt=0;
+    while(temp!=nullptr){
+        cnt++;
+        if(cnt==k)
+            break;
+        temp=temp->next;
+    }
+    if(temp==nullptr)return head;//when k>length of ll
+    DNode* prev=temp->back;
+    DNode* front =temp->next;
+    if(front==nullptr && prev==nullptr){
+        delete(temp);
+        return nullptr;
+    }
+    else if(prev==nullptr){
+        front->back=nullptr;
+        delete(temp);
+        return front;
+    }
+    else if(front==nullptr){
+        prev->next=nullptr;
+        delete(temp);
+        return head;
+    }
+    else {
+        prev->next=front;
+        front->back=prev;
+        delete(temp);
+        return head;
+    }
+    return head;
+}
+
+DNode* deletenode(DNode* temp){//node can't be head, as for it to be head we would have too amny conditions
+      DNode* prev=temp->next;
+      DNode* front=temp->back;
+      if(front==nullptr){
+        prev->next=nullptr;
+        delete(temp);
+      }
+      prev->next=front;
+      front->back=prev;
+
+      temp->next=temp->back=nullptr;
+      free(temp);
+}
+
+DNode* insertionbeforehead(DNode*head,int val){
+    DNode* el=new DNode(val,head,nullptr);
+    head->back=el;
+    return el;
+}
+DNode* insertbeforetail(DNode* head,int val){
+    if(head->next==nullptr)return insertionbeforehead(head,val);
+    
+    DNode* temp=head;
+    while(temp->next!=nullptr){
+        temp=temp->next;
+    }
+    DNode* el=new DNode(val,temp,temp->back);
+    temp->back=el;
+    temp->back->next=el;
+    return head;
+}
+DNode* insertbeforekthele(DNode* head,int k,int val){
+    if(k==1)insertionbeforehead(head,val);
+    DNode* temp=head;int cnt=0;
+    while(temp!=nullptr){
+        cnt++;
+        if(cnt==k)break;
+        temp=temp->next;
+    }
+    DNode* prev=temp->back;
+    DNode* el=new DNode(val,temp,prev);
+    prev->next=el;
+    temp->back=el;
+    return head;
+}
+DNode* insertbeforeagivennode(DNode* head,DNode*temp,int val){
+    DNode* prev=temp->back;
+    DNode* el=new DNode(val,temp,prev);
+    prev->next=el;
+    temp->back=el;
+}
+DNode* reversedll(DNode* head){
+    if(head==nullptr || head->next==nullptr)return head;   
+    DNode* last=nullptr,*current=head;
+    while(current!=nullptr){
+        last=current->back;
+        current->back=current->next;
+        current->next=last;
+        current=current->back;//to move forward we have to do current->back instead of current->next as the pointers are now reversed.
+    }
+    return last->back;
+}
+
+//revese in single ll
+Node* reverseList(Node* head) {
+        Node* prev=nullptr,*front=nullptr,*temp=head;
+        while(temp!=nullptr){
+            front=temp->next;
+            temp->next=prev;
+            prev=temp;
+            temp=front;
+        }
+        return prev;
+    }
+    Node* byrecursion(Node* head){
+        if(head==nullptr|| head->next==nullptr)return head;
+        Node* newhead=byrecursion(head->next);
+        Node* front=head->next;
+        front->next=head; 
+        head->next=nullptr;
+        return newhead;
+    }
+
+    //sort LL
+    Node *ms(Node* head){
+        Node* middle=findmiddle(head);
+        Node* left=head,*right=middle->next;
+        middle->next=nullptr;
+        left=ms(left);
+        right=ms(right);
+        return mergelist(left,right);
+    }
+    Node* findmiddle(Node* head){
+        Node*fast=head->next,*slow=head;
+        while(fast!=nullptr && fast->next!=nullptr){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        return slow;
+    }
+    Node* mergelist(Node*list1,Node*list2){
+        Node* dummy=new Node(-1);
+        Node* temp=dummy;
+        while(list1!=nullptr && list2!=nullptr){
+            if(list1->data < list2->data){
+                temp->next=list1;
+                temp=list1;
+                list1=list1->next;
+            }
+            else{
+                temp->next=list2;
+                temp=list2;
+                list2=list2->next;
+            }
+            while(list1){
+                temp->next=list1;
+                temp=list1;
+                list1=list1->next;
+            }
+            while(list2){
+                temp->next=list2;
+                temp=list2;
+                list2=list2->next;
+            }
+            return dummy->next;
+        }
+    }
+    
+
+//STACK AND QUEUE
+class stk{
+   int top=-1;int st[10],size=10;
+
+   int push(int x){
+    if(top>=size-1)cout<<"error";
+    st[++top]=x;
+   }
+
+   int top(){
+    if(top==-1)cout<<"erorr";
+    return st[top];
+   }
+
+   int pop(){
+    if(top==-1)cout<<"error";
+    int el=st[top];
+    top--;
+    return st[top];
+   }
+
+   int size(){
+    return top+1;
+   }
+
+};
+
+class queue{
+    int start=-1,end=-1;int queue[4],size=4;
+    int currsize=0;
+     
+    int push(int x){
+        if(currsize==size)cout<<"error";
+        if(currsize==0){
+            start=0;end=0;
+        }
+        else{
+            end=(end+1)%size;
+        }
+        queue[end]=x,currsize+=1;
+    }
+
+    int pop(){
+        if(currsize==0)cout<<"empty";
+        int el=queue[start];
+        if(currsize==-1)start=end=-1;
+        else start=(start+1)%size;
+        currsize-=1;
+        return el;
+    }
+
+    int top(){
+        if(currsize==0)cout<<"empty";
+        return queue[start];
+    }
+
+    int size(){
+        return currsize;
+    }
+};
